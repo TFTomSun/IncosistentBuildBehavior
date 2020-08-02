@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <PublishZipFilePath Condition="'$(PublishZipFilePath)' == ''"></PublishZipFilePath>
+  </PropertyGroup>
+
+
+  <Sdk Name="Microsoft.NET.Sdk.Publish"/>
+  <PropertyGroup Condition="'$(PublishZipFilePath)' != ''">
+    <DeployOnBuild>true</DeployOnBuild>
+    <PubblishUrl Condition="'$(PubblishUrl)' == ''">publish</PubblishUrl>
+    <_PublishProjectType Condition="'$(_PublishProjectType)' == ''">AspNetCore</_PublishProjectType>
+  </PropertyGroup>
+
+  <Target Name="PublishAsZipToProject" Condition="'$(PublishZipFilePath)' != ''"
+          Outputs="$(PublishZipFilePath)"
+          AfterTargets="AfterPublish">
+    <PropertyGroup>
+      <PublishZipDirectory>$([System.IO.Directory]::GetParent($(PublishZipFilePath)))</PublishZipDirectory>
+    </PropertyGroup>
+    <MakeDir Directories="$(PublishZipDirectory)"/>
+    <Delete Files="$(PublishZipFilePath)" />
+    <ZipDirectory Overwrite="true"
+                  SourceDirectory="$(PublishDir)"
+                  DestinationFile="$(PublishZipFilePath)" />
+
+    
+  </Target>
+  <Target Name="CleanPublishZip" AfterTargets="Clean" Condition="'$(PublishZipFilePath)' != ''">
+    <Delete Files="$(PublishZipFilePath)" />
+  </Target>
+</Project>

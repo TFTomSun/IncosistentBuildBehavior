@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="_out\**" />
+    <EmbeddedResource Remove="_out\**" />
+    <None Remove="_out\**" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <EmbeddedReference Include="BuildDemo.App" Visible="false">
+      <ReferenceName>%(Identity)</ReferenceName>
+    </EmbeddedReference>
+    <ProjectReference Include="@(EmbeddedReference->'..\%(Identity)\%(Identity).csproj')">
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SetTargetFramework>TargetFramework=net48</SetTargetFramework>
+      <AdditionalProperties>PublishZipFilePath=$(MSBuildProjectDirectory)\Resources\%(ReferenceName).zip</AdditionalProperties>
+    </ProjectReference>
+    <None Remove="@(EmbeddedReference->'Resources\%(Identity).zip')" />
+    <EmbeddedResource Include="@(EmbeddedReference->'Resources\%(Identity).zip')" />
+
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
+</Project>
